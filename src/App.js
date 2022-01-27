@@ -1,5 +1,11 @@
+import MainView from "./Views/mainView";
+
 function App() {
-  return <div>Proyecto en blanco</div>;
+  return (
+    <div>
+      <MainView />
+    </div>
+  );
 }
 
 export default App;

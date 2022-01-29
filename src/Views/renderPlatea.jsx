@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "../Styles/plateaStyles";
-import { Grid, Typography } from "@mui/material/";
+import { Grid, Typography, Button } from "@mui/material/";
 
 export default function RenderPlatea(props) {
   const classes = styles();
@@ -24,10 +24,21 @@ export default function RenderPlatea(props) {
   }, [sector]);
 
   const renderSeats = () => {
-    const seatsGrid = seats.map((item) => {
+    const seatsGrid = seats.map((seat, index) => {
       return (
-        <Grid item style={{ marginLeft: "5px" }}>
-          <p>{item}</p>
+        <Grid item key={index} style={{ marginLeft: "5px" }}>
+          <div
+            style={{
+              background: "#FF0000",
+              padding: "6px",
+              borderTopLeftRadius: "5px",
+              borderTopRightRadius: "5px",
+              cursor: "pointer",
+              color: "white",
+            }}
+          >
+            {seat}
+          </div>
         </Grid>
       );
     });
@@ -40,29 +51,31 @@ export default function RenderPlatea(props) {
       direction="column"
       justifyContent="flex-start"
       alignItems="flex-start"
+      style={{ alignItems: "center" }}
     >
-      <Grid item>
+      <Grid item style={{ marginTop: "20px" }}>
         <Typography>{sector.name}</Typography>
       </Grid>
-      {rows &&
-        seats &&
-        rows.length > 0 &&
-        seats.length > 0 &&
-        rows.map((item) => {
-          return (
-            <Grid item>
+      <Grid item style={{ width: "95%", overflowX: "auto" }}>
+        {rows &&
+          seats &&
+          rows.length > 0 &&
+          seats.length > 0 &&
+          rows.map((row, index) => {
+            return (
               <Grid
+                key={index}
                 container
                 direction="row"
-                justifyContent="flex-start"
-                alignItems="flex-start"
+                style={{ marginTop: "20px", alignItems: "center" }}
+                wrap="nowrap"
               >
-                <Grid>{item}:</Grid>
+                <Grid>{row}:</Grid>
                 {renderSeats()}
               </Grid>
-            </Grid>
-          );
-        })}
+            );
+          })}
+      </Grid>
     </Grid>
   );
 }

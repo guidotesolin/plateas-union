@@ -1,48 +1,33 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import styles from "../Styles/plateaStyles";
-import { Grid, Typography, Button } from "@mui/material/";
+import { Grid, Typography } from "@mui/material/";
 
 export default function RenderPlatea(props) {
   const classes = styles();
   const { sector } = props;
-  const [rows, setRows] = useState([]);
-  const [seats, setSeats] = useState([]);
 
-  useEffect(() => {
-    if (sector) {
-      if (sector.columnas) {
-        const rowsAux = [];
-        for (let i = 1; i <= sector.columnas; i++) rowsAux.push(i);
-        setRows(rowsAux);
-      }
-      if (sector.filas) {
-        const seatsAux = [];
-        for (let i = 1; i <= sector.filas; i++) seatsAux.push(i);
-        setSeats(seatsAux);
-      }
-    }
-  }, [sector]);
-
-  const renderSeats = () => {
+  const renderSeats = (seats) => {
     const seatsGrid = seats.map((seat, index) => {
-      return (
-        <Grid item key={index} style={{ marginLeft: "5px" }}>
-          <div
-            style={{
-              background: "#FF0000",
-              padding: "6px",
-              borderTopLeftRadius: "5px",
-              borderTopRightRadius: "5px",
-              cursor: "pointer",
-              color: "white",
-            }}
-          >
-            {seat}
-          </div>
-        </Grid>
-      );
+      if (seat && seat.id) {
+        return (
+          <Grid item key={index}>
+            <div className={classes.seat}>{renderNumber(seat.number)}</div>
+          </Grid>
+        );
+      } else {
+        return (
+          <Grid item key={index}>
+            <div className={classes.emptySeat} />
+          </Grid>
+        );
+      }
     });
     return seatsGrid;
+  };
+
+  const renderNumber = (number) => {
+    if (number < 10) return `0${number}`;
+    else return `${number}`;
   };
 
   return (
@@ -51,27 +36,31 @@ export default function RenderPlatea(props) {
       direction="column"
       justifyContent="flex-start"
       alignItems="flex-start"
-      style={{ alignItems: "center" }}
+      className={classes.root}
     >
-      <Grid item style={{ marginTop: "20px" }}>
-        <Typography>{sector.name}</Typography>
+      <Grid item>
+        <Typography className={classes.sectorTitle}>{sector.name}</Typography>
       </Grid>
-      <Grid item style={{ width: "95%", overflowX: "auto" }}>
-        {rows &&
-          seats &&
-          rows.length > 0 &&
-          seats.length > 0 &&
-          rows.map((row, index) => {
+      <Grid item className={classes.sectorContainer}>
+        {sector.numberOfRows &&
+          sector.numberOfRows > 0 &&
+          sector.distribution &&
+          sector.distribution.length > 0 &&
+          sector.distribution.map((row, index) => {
             return (
               <Grid
                 key={index}
                 container
                 direction="row"
-                style={{ marginTop: "20px", alignItems: "center" }}
+                className={classes.sector}
                 wrap="nowrap"
               >
-                <Grid>{row}:</Grid>
-                {renderSeats()}
+                <Grid>
+                  <Typography className={classes.row}>
+                    {renderNumber(row.order)}
+                  </Typography>
+                </Grid>
+                {row && row.seats && renderSeats(row.seats)}
               </Grid>
             );
           })}

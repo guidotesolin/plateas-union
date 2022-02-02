@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import styles from "../Styles/mainStyles";
+// import styles from "../Styles/mainStyles";
 import { Grid } from "@mui/material/";
 // Views
 import RenderPlatea from "./renderPlatea";
@@ -15,7 +15,7 @@ export default function MainView() {
 
   return (
     <Grid container>
-      {sectores && sectores.length > 0 && <RenderPlatea sector={sectores[5]} />}
+      {sectores && sectores.length > 0 && <RenderPlatea sector={sectores[6]} />}
     </Grid>
   );
 }

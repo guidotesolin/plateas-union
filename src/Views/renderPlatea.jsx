@@ -42,9 +42,7 @@ export default function RenderPlatea(props) {
         <Typography className={classes.sectorTitle}>{sector.name}</Typography>
       </Grid>
       <Grid item className={classes.sectorContainer}>
-        {sector.numberOfRows &&
-          sector.numberOfRows > 0 &&
-          sector.distribution &&
+        {sector.distribution &&
           sector.distribution.length > 0 &&
           sector.distribution.map((row, index) => {
             return (

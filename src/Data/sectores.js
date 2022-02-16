@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 const createSeat = (rowId, number) => {
   const id = uuidv4();
-  const taken = null;
+  const taken = false;
   return { id, rowId, number, taken };
 };
 
@@ -29,6 +29,65 @@ const createRow = (sectorId, order, distribution) => {
   rowObject.order = order;
   rowObject.seats = seats;
   return rowObject;
+};
+
+const createRedonda = () => {
+  const sector = [];
+  const col1 = [107];
+  const col2 = [35, null, 35, null, 36];
+  sector.push(createRow("Redonda", 1, col1));
+  sector.push(createRow("Redonda", 2, col2));
+  sector.push(createRow("Redonda", 3, col2));
+  sector.push(createRow("Redonda", 4, col2));
+  sector.push(createRow("Redonda", 5, col2));
+  sector.push(createRow("Redonda", 6, col2));
+  sector.push(createRow("Redonda", 7, col2));
+  sector.push(createRow("Redonda", 8, col2));
+  return sector;
+};
+
+const createSudesteAlta = () => {
+  /* 
+  Columna 1, sin pasillos
+  Columna 2-7 y 12-16, columnas con pasillos dobles
+  Columna 8-12, columna con pasillos dobles y boca de salida
+  */
+  const sector = [];
+  const col1 = [64];
+  const col2 = [24, null, null, 8, null, null, 28];
+  const col3 = [
+    24,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    28,
+  ];
+  sector.push(createRow("SudesteAlta", 1, col1));
+  sector.push(createRow("SudesteAlta", 2, col2));
+  sector.push(createRow("SudesteAlta", 3, col2));
+  sector.push(createRow("SudesteAlta", 4, col2));
+  sector.push(createRow("SudesteAlta", 5, col2));
+  sector.push(createRow("SudesteAlta", 6, col2));
+  sector.push(createRow("SudesteAlta", 7, col2));
+  sector.push(createRow("SudesteAlta", 8, col3));
+  sector.push(createRow("SudesteAlta", 9, col3));
+  sector.push(createRow("SudesteAlta", 10, col3));
+  sector.push(createRow("SudesteAlta", 11, col3));
+  sector.push(createRow("SudesteAlta", 12, col3));
+  sector.push(createRow("SudesteAlta", 13, col2));
+  sector.push(createRow("SudesteAlta", 14, col2));
+  sector.push(createRow("SudesteAlta", 15, col2));
+  sector.push(createRow("SudesteAlta", 16, col2));
+  return sector;
 };
 
 const createPrefAlta = () => {
@@ -177,42 +236,95 @@ const createSudoesteBaja = () => {
   return sector;
 };
 
+const getRandomNumber = (max) => {
+  return Math.floor(Math.random() * max);
+};
+
 const getSectores = () => {
   const sectoresDelEstadio = [
     {
       id: "Redonda",
-      name: "Platea redonda",
+      name: "Platea redonda alta",
+      distribution: createRedonda(),
+      price: 14,
     },
     {
       id: "SudesteAlta",
       name: "Platea sudeste alta",
+      distribution: createSudesteAlta(),
+      price: 17,
     },
     {
       id: "PrefAlta",
       name: "Preferencial alta",
       distribution: createPrefAlta(),
+      price: 20,
     },
     {
       id: "SudoesteAlta",
       name: "Platea sudoeste alta",
       distribution: createSudoesteAlta(),
+      price: 17,
     },
     {
       id: "SudesteBaja",
       name: "Platea sudeste baja",
       distribution: createSudesteBaja(),
+      price: 20,
     },
     {
       id: "PrefBaja",
       name: "Preferencial baja",
       distribution: createPrefBaja(),
+      price: 28,
     },
     {
       id: "SudoesteBaja",
       name: "Platea sudoeste baja",
       distribution: createSudoesteBaja(),
+      price: 20,
     },
   ];
+  // Ya estan creados los sectores
+  // Ahora vamos a asignarle un porcentaje de ocupación a cada sector
+  // Distribuiremos cada platea al 60%
+  const percentage = 0.6;
+  sectoresDelEstadio.forEach((sec) => {
+    // Primero vamos a contar el totalOfSeats de pleateas disponibles por cada sector
+    let totalOfSeats = 0;
+    if (sec.distribution && sec.distribution.length > 0) {
+      sec.distribution.forEach((row) => {
+        if (row.seats && row.seats.length > 0) {
+          row.seats.forEach((seat) => {
+            if (seat !== "empty") totalOfSeats++;
+          });
+        }
+      });
+    }
+    // Calcular la cantidad de asientos que deberían estar ocupados para cumplir con el porcentaje
+    const capacityToBeCompleted = Math.round(totalOfSeats * percentage);
+    // En este array iremos guardando los valores random que estarán ocupados
+    const randomValues = [];
+    while (randomValues.length < capacityToBeCompleted) {
+      const candidate = getRandomNumber(totalOfSeats);
+      if (!randomValues.includes(candidate)) randomValues.push(candidate);
+    }
+    // Una vez que tenemos los asientos que estarán ocupados volvemos a mapear y modificamos los asientos
+    let numberOfSeat = 0;
+    if (sec.distribution && sec.distribution.length > 0) {
+      sec.distribution.forEach((row) => {
+        if (row && row.seats && row.seats.length > 0) {
+          row.seats.forEach((seat) => {
+            if (seat !== "empty" && randomValues.includes(numberOfSeat)) {
+              seat.taken = true;
+            }
+            numberOfSeat++;
+          });
+        }
+      });
+    }
+  });
+  // Finalización de la distribución, con esto tenemos cada sector del estadio al 60%
   return sectoresDelEstadio;
 };
 

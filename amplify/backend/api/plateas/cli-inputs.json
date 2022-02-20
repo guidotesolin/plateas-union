@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "serviceConfiguration": {
+    "apiName": "plateas",
+    "serviceName": "AppSync",
+    "gqlSchemaPath": "E:\\Desarrollos\\plateas\\amplify\\backend\\api\\plateas\\schema.graphql",
+    "defaultAuthType": {
+      "mode": "API_KEY",
+      "expirationTime": 7
+    }
+  }
+}

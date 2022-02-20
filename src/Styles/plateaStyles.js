@@ -2,10 +2,11 @@ import { makeStyles } from "@mui/styles";
 
 const PlateaSyles = makeStyles(() => {
   return {
-    root: { alignItems: "center", paddingTop: "15px" },
+    root: { alignItems: "center", paddingTop: "15px", alignContent: "center" },
     sectorContainer: {
       marginTop: "20px",
       paddingLeft: "20px",
+      paddingRight: "20px",
       width: "95%",
       overflowX: "auto",
       paddingBottom: "20px",

@@ -5,11 +5,11 @@ const PlateaSyles = makeStyles(() => {
     root: { alignItems: "center", paddingTop: "15px", alignContent: "center" },
     sectorContainer: {
       marginTop: "20px",
+      marginBottom: "20px",
       paddingLeft: "20px",
       paddingRight: "20px",
       width: "95%",
       overflowX: "auto",
-      paddingBottom: "20px",
       background: "#cfcfcf",
     },
     sector: { marginTop: "20px", alignItems: "center" },

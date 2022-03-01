@@ -1,9 +1,21 @@
 import React, { useState, useEffect } from "react";
 import styles from "../Styles/mainStyles";
-import { Grid, Select, MenuItem, Divider, Typography } from "@mui/material/";
+import {
+  Grid,
+  Select,
+  MenuItem,
+  Divider,
+  Typography,
+  Button,
+} from "@mui/material/";
+import axios from "axios";
+// Data
+import { v4 as uuidv4 } from "uuid";
+import Database from "../Data/sectores";
+import { AccessToken } from "../Data/mercadoPagoCredentials";
 // Views
 import RenderPlatea from "./renderPlatea";
-import Database from "../Data/sectores";
+import MercadoPago from "./mercadoPagoView";
 
 export default function MainView() {
   const classes = styles();
@@ -13,6 +25,7 @@ export default function MainView() {
   const [selectedSector, setSelectedSector] = useState("none");
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [preferenceId, setPreferenceId] = useState(null);
 
   useEffect(() => {
     setSectores(Database);
@@ -56,6 +69,36 @@ export default function MainView() {
       // Update the hook
       setSelectedSeats(updatedArray);
     }
+  };
+
+  const postOnMercadoPago = () => {
+    const meliURL = `https://api.mercadopago.com/checkout/preferences?access_token=${AccessToken}`;
+    const productName = "Pack de plateas"; // @TODO: CREAR MANEJO DE NOMBRES
+    const productImg =
+      "https://static.ellitoral.com//um/fotos/410416_tribuna_union.jpg"; // @TODO: CREAR MANEJO DE IMAGEN
+    const params = {
+      external_reference: uuidv4(),
+      items: [
+        {
+          title: productName,
+          description: "Plateas estadio 15 de abril",
+          quantity: 1,
+          unit_price: totalPrice,
+          picture_url: productImg,
+        },
+      ],
+    };
+    axios
+      .post(meliURL, params)
+      .then((res) => {
+        debugger;
+        if (res && res.data && res.data.id) setPreferenceId(res.data.id);
+        else {
+          // @TODO: CREAR MANEJO DE ERRORES
+        }
+        console.log(res);
+      })
+      .catch((error) => console.log(error));
   };
 
   return (
@@ -214,6 +257,11 @@ export default function MainView() {
             })}
           </ul>
           <Typography>Total a pagar: ${totalPrice}</Typography>
+          {!preferenceId ? (
+            <Button onClick={postOnMercadoPago}>Generar link de pago</Button>
+          ) : (
+            <MercadoPago preferenceId={preferenceId} />
+          )}
         </Grid>
       )}
     </Grid>
